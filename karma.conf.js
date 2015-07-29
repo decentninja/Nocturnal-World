@@ -15,6 +15,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'bower_components/peerjs/peer.js',
+      'client/nocturnal.js',
       'client/tests/*.js'
     ],
 
