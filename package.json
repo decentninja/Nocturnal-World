@@ -4,11 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "./node_modules/peer/bin/peerjs --port 9000",
+    "test": "./node_modules/karma/bin/karma start karma.conf.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "peer": "^0.2.8"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.3",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.6"
   }
 }
