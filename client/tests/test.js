@@ -6,11 +6,10 @@ describe('pubsub', function() {
             a.close();
             done();
         });
-        var a = nocturnal.create('test', function() {return 'bal'}, function() {
-            setTimeout(function() {
-                a.broadcast({a: 3});
-            }, 1000);
-        });
+        var a = nocturnal.create('test', function() {return 'bal'});
+        setTimeout(function() {
+            a.broadcast({a: 3});
+        }, 1000);
     });
     it('answers on requests', function(done) {
         setTimeout(function() {

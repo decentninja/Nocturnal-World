@@ -1,6 +1,9 @@
 (function() {
     var START_TILE_SIZE = 30;
     var START_TILE_MARGIN = 5;
+    var tile_size = START_TILE_SIZE;
+    var tile_margins = START_TILE_MARGIN;
+    var screen_offset = [0, 0];
 
     // DOM
     var canvas = document.querySelector('.world');
@@ -11,45 +14,21 @@
     });
     window.dispatchEvent(new Event('resize'));
 
-    // State
-    var screen_offset = [0, 0];
-    var map = {
-        /* There is room for huge performance gains. Typed arrayes, grouping by color, tile etc.
-        */
-        0: {
-            0: 'blue',
-            1: 'white',
-            2: 'red'
-        },
-        1: {
-            0: 'green',
-            1: 'brown'
-        }
-    };
-    var tile_size = START_TILE_SIZE;
-    var tile_margins = START_TILE_MARGIN;
-
-    function update() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // calculate what we should render based on what will fit
+    function tiles() {
         var tilemarg = tile_margins + tile_size;
-        var max_x_tiles = Math.floor(0.7 * canvas.width / tilemarg);
-        var max_y_tiles = Math.floor(0.7 * canvas.height / tilemarg);
+        var max_x_tiles = 0.7 * canvas.width / tilemarg;
+        var max_y_tiles = 0.7 * canvas.height / tilemarg;
         for(
-            var x = -max_x_tiles - Math.floor(screen_offset[0] / tilemarg);
-            x < max_x_tiles - Math.floor(screen_offset[0] / tilemarg);
+            var x = Math.floor(-max_x_tiles - screen_offset[0] / tilemarg);
+            x < Math.floor(max_x_tiles - screen_offset[0] / tilemarg);
             x++
         ) {
             for(
-                var y = -max_y_tiles - Math.floor(screen_offset[1] / tilemarg);
-                y < max_y_tiles - Math.floor(screen_offset[1] / tilemarg);
+                var y = Math.floor(-max_y_tiles - screen_offset[1] / tilemarg);
+                y < Math.floor(max_y_tiles - screen_offset[1] / tilemarg);
                 y++
             ) {
-                if(map[x] && map[x][y])
-                    ctx.fillStyle = map[x][y];
-                else
-                    ctx.fillStyle = 'white';
+                ctx.fillStyle = world.getTile(x, y);
                 ctx.fillRect(
                     screen_offset[0] + tilemarg * x + canvas.width / 2,
                     screen_offset[1] + tilemarg * y + canvas.height / 2,
@@ -58,7 +37,11 @@
                 );
             }
         }
+    }
 
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        tiles();
         requestAnimationFrame(update);
     }
     update();
