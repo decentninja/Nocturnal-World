@@ -4,10 +4,22 @@
         <meta charset='utf-8'>
         <meta name='viewport' content='width=device-width'>
         <title>Nocturnal</title>
-        <link rel='stylesheet' href='../bower_components/normalize.css' type='text/css'>
+        <link rel='stylesheet' href='../bower_components/normalize.css/normalize.css' type='text/css'>
     </head>
     <body>
+        <canvas class="world"></canvas>
+        <style>
+            body {
+                overflow: hidden;
+            }
+            .world {
+                width: 100vw;
+                height: 100vh;
+                background-color: #221B1B;
+            }
+        </style>
         <script src='../bower_components/peerjs/peer.js'></script>
         <script src='nocturnal.js'></script>
+        <script src='world.js'></script>
     </body>
 </html>

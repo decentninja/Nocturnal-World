@@ -9,7 +9,7 @@ describe('pubsub', function() {
         var a = nocturnal.create('test', function() {return 'bal'}, function() {
             setTimeout(function() {
                 a.broadcast({a: 3});
-            }, 100);
+            }, 1000);
         });
     });
     it('answers on requests', function(done) {
