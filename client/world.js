@@ -24,9 +24,11 @@ var map = {
 };
 
 // BTW the rendering animation opacity thingy could be done with a seperate state. prob best way.
-//
-var tile_size = 30;
-var tile_margins = 5;
+
+var START_TILE_SIZE = 30;
+var tile_size = START_TILE_SIZE;
+var START_TILE_MARGIN = 5;
+var tile_margins = START_TILE_MARGIN;
 
 function update() {
     var now = performance.now();
@@ -35,7 +37,7 @@ function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // calculate what we should render based on what will fit
-    var tilemarg = (tile_margins + tile_size);
+    var tilemarg = tile_margins + tile_size;
     var max_x_tiles = Math.floor(0.6 * canvas.width / tilemarg);
     var max_y_tiles = Math.floor(0.6 * canvas.height / tilemarg);
     for(
@@ -53,8 +55,8 @@ function update() {
             } else
                 ctx.fillStyle = 'white';
             ctx.fillRect(
-                screen_offset[0] + (tile_size + tile_margins) * x + canvas.width / 2,
-                screen_offset[1] + tile_margins + (tile_size + tile_margins) * y + canvas.height / 2,
+                screen_offset[0] + tilemarg * x + canvas.width / 2,
+                screen_offset[1] + tilemarg * y + canvas.height / 2,
                 tile_size,
                 tile_size
             );
@@ -66,6 +68,7 @@ function update() {
 
 update();
 
+// TODO Some momentum would be nice!
 var draggin = false;
 canvas.addEventListener('mousemove', function(e) {
     if(draggin) {
@@ -79,4 +82,15 @@ canvas.addEventListener('mousedown', function(e) {
 });
 canvas.addEventListener('mouseup', function(e) {
     draggin = false;
+});
+
+// Zoom
+canvas.addEventListener('mousewheel', function(e) {
+    if(e.wheelDeltaY > 0) {
+        tile_size *= 1.1;
+        tile_margins *= 1.1;
+    } else {
+        tile_size *= 0.9;
+        tile_margins *= 0.9;
+    }
 });
