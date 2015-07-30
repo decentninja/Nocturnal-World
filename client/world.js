@@ -6,30 +6,25 @@ window.addEventListener('resize', function() {
 });
 window.dispatchEvent(new Event('resize'));
 var last_frame = performance.now();
-var location_center = [0, 0];       // center of view
+var screen_offset = [0, 0];
 var SLICE_SIZE = 100;       // sqrt of amount of tiles in a slice
 
 var map = {
-    /* There is room for huge performance gains. Typed arrayes, grouping by color.
-     The positions are offsets from the tile position. No negative values are allowed.
+    /* There is room for huge performance gains. Typed arrayes, grouping by color, tile etc.
      */
     0: {
-        0: {
-            tiles: {
-                0: {
-                    0: 'blue',
-                    1: 'white',
-                    2: 'red'
-                },
-                1: {
-                    0: 'green',
-                    1: 'brown'
-                }
-            }
-        }
+        0: 'blue',
+        1: 'white',
+        2: 'red'
+    },
+    1: {
+        0: 'green',
+        1: 'brown'
     }
 };
 
+// BTW the rendering animation opacity thingy could be done with a seperate state. prob best way.
+//
 var tile_size = 30;
 var tile_margins = 5;
 
@@ -39,21 +34,49 @@ function update() {
     var lastframe = now;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // render slice 0, 0;
-    var tiles = map[0][0].tiles;
-    Object.keys(tiles).forEach(function(x) {
-        Object.keys(tiles[x]).forEach(function(y) {
-            ctx.fillStyle = tiles[x][y];
+    // calculate what we should render based on what will fit
+    var tilemarg = (tile_margins + tile_size);
+    var max_x_tiles = Math.floor(0.6 * canvas.width / tilemarg);
+    var max_y_tiles = Math.floor(0.6 * canvas.height / tilemarg);
+    for(
+        var x = -max_x_tiles - Math.floor(screen_offset[0] / tilemarg);
+        x < max_x_tiles - Math.floor(screen_offset[0] / tilemarg);
+        x++
+    ) {
+        for(
+            var y = -max_y_tiles - Math.floor(screen_offset[1] / tilemarg);
+            y < max_y_tiles - Math.floor(screen_offset[1] / tilemarg);
+            y++
+        ) {
+            if(map[x] && map[x][y]) {
+                ctx.fillStyle = map[x][y];
+            } else
+                ctx.fillStyle = 'white';
             ctx.fillRect(
-                tile_margins + (tile_size + tile_margins) * x,
-                tile_margins + (tile_size + tile_margins) * y, 
+                screen_offset[0] + (tile_size + tile_margins) * x + canvas.width / 2,
+                screen_offset[1] + tile_margins + (tile_size + tile_margins) * y + canvas.height / 2,
                 tile_size,
                 tile_size
             );
-        });
-    });
+        }
+    }
+
     requestAnimationFrame(update);
 }
 
 update();
 
+var draggin = false;
+canvas.addEventListener('mousemove', function(e) {
+    if(draggin) {
+        screen_offset[0] += 2 * e.movementX;
+        screen_offset[1] += 2 * e.movementY;
+    }
+});
+
+canvas.addEventListener('mousedown', function(e) {
+    draggin = true;
+});
+canvas.addEventListener('mouseup', function(e) {
+    draggin = false;
+});
