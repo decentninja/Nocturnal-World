@@ -20,16 +20,20 @@
                 if(data.type == 'broadcast')
                     callback(data.data);
                 if(data.type == 'answer') {
-                    answer_callbacks[data.request_number](data.data);
-                    delete answer_callbacks[data.request_number];
+                    if(answer_callbacks[data.request_number]) {
+                        answer_callbacks[data.request_number](data.data);
+                        delete answer_callbacks[data.request_number];
+                    }
                 }
             });
             conn.on('open', function() {
                 eventemitter.dispatchEvent(new Event('open'));
             });
             eventemitter.request = function(data, callback) {
-                request_count++;
-                answer_callbacks[request_count] = callback;
+                if(callback) {
+                    request_count++;
+                    answer_callbacks[request_count] = callback;
+                }
                 conn.send({
                     data: data,
                     type: 'request',

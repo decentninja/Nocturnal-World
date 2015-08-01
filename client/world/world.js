@@ -1,3 +1,5 @@
+// TODO Important, create a sparce map class. This if(!map..) is super tedious.
+
 (function() {
 	var SLICE_SIZE = 100;       // sqrt of amount of tiles in a slice
 	var map = {
@@ -47,6 +49,22 @@
 								}
 							}
 							return mapslice;
+						case 'update':
+							// Some security sorting so that we don't update things we don't controll
+							var data = {};
+							Object.keys(question.data).forEach(function(x) {
+								if(x / SLICE_SIZE == x_slice) {
+									if(!data[x])
+										data[x] = {};
+									Object.keys(question.data[x]).forEach(function(y) {
+										if(y / SLICE_SIZE == y_slice)
+											data[x][y] = question.data[x][y];
+									});
+								}
+							});
+							map_update(data);
+							slice.broadcast(data);
+							return '';
 					}
 				});
 				var nodup = true;
@@ -82,6 +100,51 @@
 				return 'white';
 		},
 		SLICE_SIZE: SLICE_SIZE,
+		update_tiles: function(map_part) {
+			// This code assumes that a getTile has already been called
+			// map_part has the same format as the map.
+			// This method will devide into slices and eather request a update or broadcast a update depending on ownership
+			
+			var map_slices = {};
+			Object.keys(map_part).forEach(function(x) {
+				Object.keys(map_part).forEach(function(y) {
+					var x_slice = Math.floor(x / SLICE_SIZE);
+					var y_slice = Math.floor(y / SLICE_SIZE);
+					var slice = slices[x_slice][y_slice];
+					if(!map_slices[x_slice])
+						map_slices[x_slice] = {}
+					if(!map_slices[x_slice][y_slice]) {
+						var data = {};
+						data[x] = {};
+						data[x][y] = map_part[x][y];
+						map_slices[x_slice][y_slice] = {
+							map: data,
+							connection: slice
+						};
+					} else {
+						var mslice = map_slices[x_slice][y_slice];
+						if(!mslice.map[x])
+							mslice.map[x] = {}
+						mslice.map[x][y] = map_part[x][y];
+					}
+				});
+			});
+			Object.keys(map_slices).forEach(function(x_slice) {
+				Object.keys(map_slices[x_slice]).forEach(function(y_slice) {
+					var connection = map_slices[x_slice][y_slice].connection;
+					var slice_data = map_slices[x_slice][y_slice].map;
+					if(connection.type == 'client') {
+						console.log('update of non-owned slice, sending request', slice_data);
+						connection.request({action: 'update', data: slice_data});
+					}
+					else if(connection.type == 'service') {
+						console.log('update of owned slice, sending broadcast', slice_data);
+						update_map(slice_data);
+						connection.broadcast(slice_data);
+					}
+				});
+			});
+		}
 	};
 	window.world = world;
 })();
