@@ -26,7 +26,7 @@
 		});
 	}
 	var world = {
-		getTile: function(x, y) {
+		getTile: function(x, y) { // TODO snake_case
 			var x_slice = Math.floor(x / SLICE_SIZE);
 			var y_slice = Math.floor(y / SLICE_SIZE);
 			if(!slices[x_slice] || (slices[x_slice] && !slices[x_slice][y_slice])) {
@@ -139,7 +139,7 @@
 					}
 					else if(connection.type == 'service') {
 						console.log('update of owned slice, sending broadcast', slice_data);
-						update_map(slice_data);
+						map_update(slice_data);
 						connection.broadcast(slice_data);
 					}
 				});
