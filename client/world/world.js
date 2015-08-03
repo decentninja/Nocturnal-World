@@ -50,14 +50,14 @@
 							}
 							return mapslice;
 						case 'update':
-							// Some security sorting so that we don't update things we don't controll
+							// Some security sorting so that we don't update things we don't control
 							var data = {};
 							Object.keys(question.data).forEach(function(x) {
-								if(x / SLICE_SIZE == x_slice) {
+								if(Math.floor(x / SLICE_SIZE) == x_slice) {
 									if(!data[x])
 										data[x] = {};
 									Object.keys(question.data[x]).forEach(function(y) {
-										if(y / SLICE_SIZE == y_slice)
+										if(Math.floor(y / SLICE_SIZE) == y_slice)
 											data[x][y] = question.data[x][y];
 									});
 								}
