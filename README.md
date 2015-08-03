@@ -12,5 +12,20 @@ The system itself can't do much. We need to improve it! You can do this in multi
 	- by making pull requests on the server
 	- by spell checking this README and making a pull request (or changing it right here on GitHub)
 
-## The Client
+# The Client
 The client consists of a index.html file which imports the client library. The index.html looks for a myscript.js file in the same directory. Thats one easy way to use the application. You can also edit the HTML file directly or use something like chrome devtools snippits.
+
+## Setup
+The client dependencies are managed by bower. If you don't already have bower install it with `npm install -g bower`. If you don't have node and npm install. Do that with your systems package manager like bower, apt-get or from the official node website.
+
+Then type: `bower install`, to get all client dependencies.
+
+Then just open `client/index.html` your browser.
+
+# Server
+The server dependencies are managed with npm so a `npm install` should be sufficient to get them all.
+
+To run the server type: `npm run-script run`.
+
+# Tests
+These are run with karma and built in jasmine. To run them just type: `npm test`.
