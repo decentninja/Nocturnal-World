@@ -21,7 +21,8 @@
 			if(!map[x])
 				map[x] = {};
 			Object.keys(data[x]).forEach(function(y) {
-				map[x][y] = data[x][y];
+				if(data[x][y])
+					map[x][y] = data[x][y];
 			});
 		});
 	}

@@ -1,5 +1,5 @@
 // Helper functions for interacting with the world.
-// Example: shape.rect(0, 0, 10, 10).set('white').save();
+// Example: shape.circle(0, 0, 50).set(function(x, y) {return 'rgb(' + Math.abs(x)*10 + ',' + Math.abs(y)*10 + ', 100)';}).save()
 // Does not care or know about implementation details such as mapslices, 
 
 
